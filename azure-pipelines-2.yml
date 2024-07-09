@@ -1,0 +1,28 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+    backendServiceArm: 'Noise_control_project_service_connection'
+    backendAzureRmResourceGroupName: 'Abhishek_RG_donot_delete'
+    backendAzureRmStorageAccountName: 'tfstorageabhi2424'
+    backendAzureRmContainerName: 'homelockcontainer'
+    backendAzureRmKey: 'dev_noise_tfstate'
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      yamllint --version
+      
+      yamllint
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'

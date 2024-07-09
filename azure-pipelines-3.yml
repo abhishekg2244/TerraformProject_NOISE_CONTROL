@@ -1,0 +1,41 @@
+trigger: none
+
+pool: Default
+
+steps:
+  
+- task: TerraformInstaller@1
+  displayName: "Install Terraform tool"
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTaskV4@4
+  displayName: "terraform init"
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/PreProd'
+    backendServiceArm: 'Noise_control_project_service_connection'
+    backendAzureRmResourceGroupName: 'Abhishek_RG_donot_delete'
+    backendAzureRmStorageAccountName: 'tfstorageabhi2424'
+    backendAzureRmContainerName: 'homelockcontainer'
+    backendAzureRmKey: 'preprod_noise_tfstate'
+
+- task: TerraformTaskV4@4
+  displayName: "terraform plan"
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/PreProd'
+    environmentServiceNameAzureRM: 'Noise_control_project_service_connection'
+
+- task: TerraformTaskV4@4
+  displayName: "terraform apply"
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/PreProd'
+    environmentServiceNameAzureRM: 'Noise_control_project_service_connection'
+
+
+

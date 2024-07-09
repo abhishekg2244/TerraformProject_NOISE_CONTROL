@@ -1,0 +1,45 @@
+trigger: none
+
+pool: Default
+
+steps:
+- task: TerraformInstaller@1
+  displayName: 'install tool'
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTaskV4@4
+  displayName: 'Terraform INIT'
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+    backendServiceArm: 'Noise_control_project_service_connection'
+    backendAzureRmResourceGroupName: 'Abhishek_RG_donot_delete'
+    backendAzureRmStorageAccountName: 'tfstorageabhi2424'
+    backendAzureRmContainerName: 'homelockcontainer'
+    backendAzureRmKey: 'dev_noise_tfstate'
+
+- task: tfsec@1
+  displayName: 'Tfsec scan'
+  inputs:
+    version: 'v1.26.0'
+    dir: '$(System.DefaultWorkingDirectory)/Modules'
+
+- task: TerraformTaskV4@4
+  displayName: 'Tfsec Plan'
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+    environmentServiceNameAzureRM: 'Noise_control_project_service_connection'
+
+- task: TerraformTaskV4@4
+  displayName: 'Tfsec Apply'
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+    environmentServiceNameAzureRM: 'Noise_control_project_service_connection'
+
+
